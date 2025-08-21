@@ -1,0 +1,99 @@
+/* ===============================
+   Intro Animada - Piedra, Papel o Tijera
+   =============================== */
+
+/* Fondo inicial con animación de gradiente */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(-45deg, #0f172a, #1e293b, #334155, #475569);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Animación del fondo */
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Caja de introducción */
+.intro {
+    max-width: 700px;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background: rgba(17, 24, 39, 0.8);
+    box-shadow: 0 0 30px rgba(255,255,255,0.2);
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Título animado */
+.intro h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(to right, #38bdf8, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s infinite;
+}
+
+/* Texto con aparición secuencial */
+.intro p {
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: slideUp 1s ease forwards;
+}
+.intro p:nth-child(2) { animation-delay: 1s; }
+.intro p:nth-child(3) { animation-delay: 2s; }
+.intro p:nth-child(4) { animation-delay: 3s; }
+.intro p:nth-child(5) { animation-delay: 4s; }
+
+/* Botón para empezar */
+.start-btn {
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    background: linear-gradient(45deg, #38bdf8, #a78bfa, #f472b6);
+    color: white;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 5s;
+}
+.start-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
+
+/* ===============================
+   Keyframes de animación
+   =============================== */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+    0% { text-shadow: 0 0 10px #38bdf8; }
+    50% { text-shadow: 0 0 20px #f472b6; }
+    100% { text-shadow: 0 0 10px #a78bfa; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

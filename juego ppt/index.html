@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Piedra, Papel o Tijera – Mejor de N con Apuestas</title>
+  <link rel="stylesheet" href="intro.css">
+
+<div class="intro">
+  <h1>¡Bienvenido a Piedra, Papel o Tijera!</h1>
+  <p>🎮 Elige Piedra, Papel o Tijera.</p>
+  <p>✋ Piedra vence a Tijera.</p>
+  <p>📄 Papel vence a Piedra.</p>
+  <p>✂️ Tijera vence a Papel.</p>
+  <p>🔥 ¡El primero en ganar N rondas será el campeón!</p>
+  <button class="start-btn" onclick="document.querySelector('.intro').style.display='none'">
+    ¡Empezar a jugar!
+  </button>
+</div>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --accent:#22c55e;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --primary:#38bdf8;
+      --ring:#22d3ee;
+    }
+    html, body { height: 100%; }
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial;
+      background: radial-gradient(1200px 1200px at 100% -10%, #1e293b 0%, var(--bg) 60%);
+      color: var(--text);
+      display:flex; align-items:center; justify-content:center;
+      padding: 24px;
+    }
+    .app{ width:min(980px, 100%); }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      overflow:hidden;
+    }
+    header{
+      padding:24px;
+      display:flex; gap:16px; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    header h1{ margin:0; font-size: clamp(20px, 2.2vw, 28px); }
+    header .subtitle{ color: var(--muted); font-size: 14px; }
+    .controls{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+    .coins {
+      font-weight: 700;
+      font-size: 15px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background:#0b1220;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+    .select, .btn{ appearance:none; border:none; cursor:pointer; }
+    .select{
+      background:#0b1220; color:var(--text); border:1px solid rgba(255,255,255,0.1);
+      padding:10px 12px; border-radius:12px; font-size:14px;
+    }
+    .btn{
+      background:#0b1220; color: var(--text); border:1px solid rgba(255,255,255,0.1);
+      padding:10px 14px; border-radius:12px; font-weight:600; font-size:14px;
+    }
+    main{ display:grid; grid-template-columns: 1.2fr .8fr; gap:18px; padding:20px; }
+    @media (max-width: 860px){ main{ grid-template-columns: 1fr; } }
+    .arena{ background: rgba(2,6,23,.55); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:20px; }
+    .row{ display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .choices{ display:flex; gap:12px; }
+    .choice{
+      font-size: clamp(22px, 3vw, 28px);
+      padding: 14px 16px; border-radius: 14px;
+      background:#0b1220; border:1px solid rgba(255,255,255,0.1);
+      display:flex; align-items:center; gap:10px;
+    }
+    .score{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:14px; }
+    .tile{ background:#0b1220; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:12px; text-align:center; }
+    .tile h3{ margin:4px 0 2px; font-size:14px; color:var(--muted); }
+    .tile .num{ font-size: clamp(22px, 3vw, 28px); font-weight:800 }
+    .log{ margin-top:16px; background:#0b1220; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:14px; min-height:72px; }
+    .aside{ background: rgba(2,6,23,.55); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px; }
+    .result{ text-align:center; margin-top:16px; font-size: clamp(18px, 2.6vw, 22px) }
+    .result.win{ color: var(--accent) }
+    .result.lose{ color: var(--danger) }
+    .result.draw{ color: var(--warning) }
+    .bet-box{
+      margin-top:16px; padding:12px; border-radius:12px;
+      background:#0b1220; border:1px solid rgba(255,255,255,.08);
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .bet-box label{ font-size:14px; color:var(--muted); }
+    .bet-box input{
+      width:100%; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,.15);
+      background:#111827; color:var(--text); font-size:14px;
+    }
+    .bet-box button{ width:100%; }
+  </style>
+</head>
+<body>
+  <div class="app card">
+    <header>
+      <div>
+        <h1>🗿📄✂️ Piedra, Papel o Tijera</h1>
+        <div class="subtitle">Modo <strong>Mejor de N</strong> · con marcador y apuestas</div>
+      </div>
+      <div class="controls">
+        <span id="coins" class="coins">💰 1000</span>
+        <label>
+          <span class="subtitle">Rondas:</span>
+          <select id="bestOf" class="select">
+            <option value="3">Mejor de 3</option>
+            <option value="5" selected>Mejor de 5</option>
+            <option value="7">Mejor de 7</option>
+            <option value="9">Mejor de 9</option>
+          </select>
+        </label>
+        <button id="newMatch" class="btn primary">Nueva partida</button>
+        <button id="resetAll" class="btn ghost">Reiniciar todo</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="arena">
+        <div class="row">
+          <h2 class="subtitle">Elegí tu jugada</h2>
+          <div class="choices">
+            <button class="choice" data-move="piedra">🗿 Piedra</button>
+            <button class="choice" data-move="papel">📄 Papel</button>
+            <button class="choice" data-move="tijera">✂️ Tijera</button>
+          </div>
+        </div>
+        <div class="versus">
+          <div class="badge" id="playerPick">—</div>
+          <div class="vs">VS</div>
+          <div class="badge" id="cpuPick">—</div>
+        </div>
+        <div id="roundResult" class="result"></div>
+        <div class="log"><p id="logLine" class="small">Esperando tu primera jugada…</p></div>
+      </section>
+
+      <aside class="aside">
+        <h2>Marcador</h2>
+        <div class="score">
+          <div class="tile"><h3>Tú</h3><div class="num" id="scorePlayer">0</div></div>
+          <div class="tile"><h3>Empates</h3><div class="num" id="scoreDraws">0</div></div>
+          <div class="tile"><h3>PC</h3><div class="num" id="scoreCpu">0</div></div>
+        </div>
+        <div class="result" id="matchResult"></div>
+        <!-- Apuesta -->
+        <div class="bet-box">
+          <label for="betAmount">Apuesta (opcional):</label>
+          <input type="number" id="betAmount" min="1" value="100" />
+          <button id="setBet" class="btn primary">Confirmar apuesta</button>
+          <p class="subtitle" id="betInfo">Sin apuesta activa</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+  class JuegoPPT {
+    constructor(bestOf=5){
+      this.opciones={piedra:'🗿',papel:'📄',tijera:'✂️'};
+      this.setBestOf(bestOf); this.resetMarcador();
+    }
+    setBestOf(n){ n=parseInt(n,10); if(!Number.isFinite(n)||n<1) n=1; if(n%2===0) n+=1;
+      this.bestOf=n; this.victoriasNecesarias=Math.floor(n/2)+1; }
+    resetMarcador(){ this.marcador={jugador:0,computadora:0,empates:0}; this.rondasJugadas=0; this.finalizada=false; }
+    elegirComputadora(){ const k=Object.keys(this.opciones); return k[Math.floor(Math.random()*k.length)]; }
+    determinarGanador(j,c){ if(j===c) return 'empate'; const reglas={piedra:'tijera',papel:'piedra',tijera:'papel'}; return reglas[j]===c?'jugador':'computadora'; }
+    jugarRonda(j){ if(this.finalizada) return {error:'La partida ya terminó.'}; if(!this.opciones[j]) return {error:'Jugada inválida.'};
+      const cpu=this.elegirComputadora(); const res=this.determinarGanador(j,cpu);
+      if(res==='jugador') this.marcador.jugador++; else if(res==='computadora') this.marcador.computadora++; else this.marcador.empates++;
+      this.rondasJugadas++; if(this.marcador.jugador>=this.victoriasNecesarias||this.marcador.computadora>=this.victoriasNecesarias||this.rondasJugadas>=this.bestOf) this.finalizada=true;
+      return {jugador:j,cpu,resultado:res,marcador:{...this.marcador},finalizada:this.finalizada};
+    }
+  }
+
+  const el=(id)=>document.getElementById(id);
+  const bestOfSelect=el('bestOf'), btnNewMatch=el('newMatch'), btnResetAll=el('resetAll');
+  const scorePlayer=el('scorePlayer'),scoreCpu=el('scoreCpu'),scoreDraws=el('scoreDraws');
+  const playerPick=el('playerPick'),cpuPick=el('cpuPick'),roundResult=el('roundResult'),matchResult=el('matchResult'),logLine=el('logLine');
+  const coinsEl=el('coins'),betAmount=el('betAmount'),setBetBtn=el('setBet'),betInfo=el('betInfo');
+  const choiceButtons=Array.from(document.querySelectorAll('.choice'));
+  const estado={ juego:null, monedas:1000, apuesta:0 };
+
+  function updateCoins(){ coinsEl.textContent=`💰 ${estado.monedas}`; }
+  function initGame(n=5){ estado.juego=new JuegoPPT(n); updateScores(); playerPick.textContent='—'; cpuPick.textContent='—'; roundResult.textContent=''; matchResult.textContent=''; logLine.textContent=`Partida nueva: mejor de ${estado.juego.bestOf}`; choiceButtons.forEach(b=>b.setAttribute('aria-pressed','false')); }
+  function updateScores(){ scorePlayer.textContent=estado.juego.marcador.jugador; scoreCpu.textContent=estado.juego.marcador.computadora; scoreDraws.textContent=estado.juego.marcador.empates; }
+  function play(m){ const r=estado.juego.jugarRonda(m); if(r.error){ logLine.textContent=r.error; return; }
+    playerPick.textContent=`${estado.juego.opciones[r.jugador]} ${r.jugador}`; cpuPick.textContent=`${estado.juego.opciones[r.cpu]} ${r.cpu}`;
+    roundResult.className='result'; if(r.resultado==='jugador'){roundResult.classList.add('win');roundResult.textContent='🎉 ¡Ganaste la ronda!';}
+    else if(r.resultado==='computadora'){roundResult.classList.add('lose');roundResult.textContent='💀 Perdiste la ronda…';}
+    else{roundResult.classList.add('draw');roundResult.textContent='🤝 ¡Empate!';}
+    updateScores(); logLine.textContent=`Ronda ${estado.juego.rondasJugadas}/${estado.juego.bestOf}`;
+    if(r.finalizada) endMatch();
+  }
+  function endMatch(){ const {jugador,computadora}=estado.juego.marcador; matchResult.className='result';
+    if(jugador>computadora){ matchResult.classList.add('win'); matchResult.textContent=`🏆 ¡Ganaste ${jugador}-${computadora}!`; if(estado.apuesta>0){ estado.monedas+=estado.apuesta*3; updateCoins(); betInfo.textContent=`Ganaste apuesta: +${estado.apuesta*3}`; } }
+    else if(jugador<computadora){ matchResult.classList.add('lose'); matchResult.textContent=`😢 Perdió ${computadora}-${jugador}…`; if(estado.apuesta>0){ estado.monedas-=estado.apuesta; updateCoins(); betInfo.textContent=`Perdiste apuesta: -${estado.apuesta}`; } }
+    else{ matchResult.classList.add('draw'); matchResult.textContent='🤝 Empate final.'; if(estado.apuesta>0){ const gan=Math.floor(estado.apuesta*0.2); estado.monedas+=gan; updateCoins(); betInfo.textContent=`Empate apuesta: +${gan}`; } }
+    estado.apuesta=0;
+  }
+
+  choiceButtons.forEach(btn=>btn.addEventListener('click',()=>{ if(estado.juego.finalizada) return; play(btn.dataset.move); }));
+  bestOfSelect.addEventListener('change',()=>initGame(Number(bestOfSelect.value)));
+  btnNewMatch.addEventListener('click',()=>initGame(estado.juego.bestOf));
+  btnResetAll.addEventListener('click',()=>{ estado.monedas=1000; updateCoins(); betInfo.textContent="Sin apuesta activa"; initGame(5); bestOfSelect.value="5"; });
+  setBetBtn.addEventListener('click',()=>{ const val=Number(betAmount.value); if(val>0 && val<=estado.monedas){ estado.apuesta=val; betInfo.textContent=`Apuesta activa: ${val}`; } else betInfo.textContent="Apuesta inválida"; });
+  (function start(){ updateCoins(); initGame(5); })();
+  </script>
+</body>
+</html>
